@@ -5,6 +5,7 @@ open class Model() {
         const val YOU_ARE_PLAYER_Y = "You will be player Y\n"
         const val ENTER_ROW = "Enter row number\n"
         const val ENTER_COLUMN = "Enter column number\n"
+        const val YOU_WIN = "YOU WIN: "
         const val THREE = 3
         const val TWO = 2
         const val ONE = 1
