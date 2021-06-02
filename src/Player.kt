@@ -1,6 +1,7 @@
 enum class Player(val player: String) {
     X("X"),
-    O("O");
+    O("O"),
+    NA(" ");
 
     open fun getOtherPlayer(): Player {
         return if (this == X) {
@@ -8,6 +9,5 @@ enum class Player(val player: String) {
         } else {
             X
         }
-
     }
 }
