@@ -1,54 +1,128 @@
-import com.sun.org.apache.xpath.internal.operations.Bool
+import javax.jws.WebParam
 
 open class ViewModel : ViewListener {
 
-    lateinit var viewState: ViewState
-    lateinit var view: View
+    private lateinit var viewState: ViewState
+    private lateinit var view: View
+    private lateinit var model: Model
 
     fun startGame() {
         viewState = ViewState()
         view = View(this)
-        Model.gameStart = true
-        Model.enterRow = false
-        Model.enterColumn = false
-        Model.alreadyUsed = false
+        model = Model()
+        Model.isItTheComputersTurn = (0..1).random() == 0
+        Model.didGameStart = true
         Model.didCurrentUserWin = false
-        Model.willUserWin = false
+        Model.isItTimeToEnterRow = !Model.isItTheComputersTurn
+        Model.isItTimeToEnterColumn = false
+        Model.isBoardFull = false
         viewState.displayOutput = false
         viewState.askForInput = false
-
         invalidateTheView()
     }
 
     private fun generateStateFromModel() {
-        if (Model.gameStart) {
-            Model.enterRow = true
+        if (Model.didGameStart) {
+            viewState.output = Model.WELCOME_TO_TICK
+            viewState.output += boardToString()
+            if (Model.isItTheComputersTurn) {
+                playComputerTurn()
+                return
+            }
+            viewState.output += Model.YOU_ARE_PLAYER
+            viewState.output += "${Player.X} \n"
+            viewState.output += Model.ENTER_ROW
             viewState.displayOutput = true
             viewState.askForInput = true
-            viewState.input = Model.WELCOME_TO_TICK
-            viewState.input += Model.YOU_ARE_PLAYER_X
-            viewState.input += Model.ENTER_ROW
-            Model.gameStart = false
+            return
+        }
+        if (Model.isItTheComputersTurn) {
+            playComputerTurn()
+        }
+        if (Model.isItTheUsersTurn) {
+            if (Model.isItTimeToEnterRow) {
+                viewState.output = boardToString()
+                viewState.output += Model.PLAYER + model.player
+                viewState.output += "\n"
+                viewState.output += Model.ENTER_ROW
+                viewState.askForInput = true
+                viewState.displayOutput = true
+            }
+
+            if (Model.isItTimeToEnterColumn) {
+                viewState.output = Model.ENTER_COLUMN
+                viewState.askForInput = true
+                viewState.displayOutput = true
+            }
             return
         }
 
-        if (Model.enterRow) {
-            viewState.input = Model.ENTER_ROW
-            viewState.askForInput = true
-            viewState.displayOutput = true
-        }
-
-        if (Model.enterColumn) {
-            viewState.input += Model.ENTER_COLUMN
-            viewState.askForInput = true
-            viewState.displayOutput = true
-        }
-
         if (Model.didCurrentUserWin) {
-            viewState.input = Model.YOU_WIN
+            viewState.output = Model.YOU_WIN
             viewState.askForInput = false
             viewState.displayOutput = true
+            return
         }
+
+        if (Model.isBoardFull) {
+            viewState.output = boardToString()
+            viewState.output += Model.ITS_A_DRAW
+            viewState.displayOutput = true
+            viewState.askForInput = false
+            Model.isBoardFull = false
+            return
+        }
+    }
+
+    private fun playComputerTurn() {
+        Model.didGameStart = false
+        var row = (0..2).random()
+        var column = (0..2).random()
+        while (!isUserCoordinateValid(row, column)) {
+            row = (0..2).random()
+            column = (0..2).random()
+        }
+        markCurrentPlayerMoveOnBoard(row, column)
+        if (isBoardFull()) {
+            Model.isBoardFull = true
+            Model.didCurrentUserWin = false
+            Model.isItTheUsersTurn = false
+            Model.isItTheComputersTurn = false
+            Model.isItTimeToEnterRow = false
+            Model.isItTimeToEnterColumn = false
+            invalidateTheView()
+            return
+            //TODO: Check is there is a winner and update the winner status
+        }
+        model.player = getOtherPlayer(model.player)
+        Model.isItTheUsersTurn = true
+        Model.isItTheComputersTurn = false
+        Model.isItTimeToEnterRow = true
+        Model.isItTimeToEnterColumn = false
+        invalidateTheView()
+    }
+
+    private fun isBoardFull(): Boolean {
+        for (row in model.gameBoard) {
+            for (column in row) {
+                if (column == Player.NA) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    private fun doesUserWinHorizontallyAtRow(row: Int): Boolean {
+        return false
+    }
+
+    private fun doesUserWinVertically(): Boolean {
+        return false
+    }
+
+    private fun doesUserWinDiagonally(): Boolean {
+        return false
     }
 
     open fun invalidateTheView() {
@@ -57,33 +131,87 @@ open class ViewModel : ViewListener {
     }
 
     override fun enteredInput(input: String?) {
-        var row: Int
-        var col: Int
-        if (Model.enterRow) {
-            row = checkUserInput(input)
-            if (isUserWithinRange(row)) {
-                Model.enterRow = false
-                Model.enterColumn = true
+        Model.didGameStart = false
+        if (Model.isItTimeToEnterRow) {
+            model.row = checkUserInput(input)
+            if (isUserWithinRange(model.row)) {
+                Model.isItTheComputersTurn = false
+                Model.isItTheUsersTurn = true
+                Model.isItTimeToEnterRow = false
+                Model.isItTimeToEnterColumn = true
                 invalidateTheView()
                 return
             }
-            Model.enterRow = true
-            Model.enterColumn = false
+            Model.isItTheComputersTurn = false
+            Model.isItTheUsersTurn = true
+            Model.isItTimeToEnterRow = true
+            Model.isItTimeToEnterColumn = false
             invalidateTheView()
             return
         }
-        if (Model.enterColumn) {
-            col = checkUserInput(input)
-            if (isUserWithinRange(col)) {
-                Model.enterRow = true
-                Model.enterColumn = false
+        if (Model.isItTimeToEnterColumn) {
+            model.column = checkUserInput(input)
+            if (isUserWithinRange(model.column)) {
+                if (isUserCoordinateValid(model.row, model.column)) {
+                    markCurrentPlayerMoveOnBoard(model.row, model.column)
+                    model.player = getOtherPlayer(model.player)
+                    if (!isBoardFull()) {
+                        Model.isItTheComputersTurn = true
+                        Model.isItTheUsersTurn = false
+                        Model.isItTimeToEnterRow = false
+                        Model.isItTimeToEnterColumn = false
+                        Model.isBoardFull = false
+                        invalidateTheView()
+                    }else {
+                        Model.isItTheComputersTurn = false
+                        Model.isItTheUsersTurn = false
+                        Model.isItTimeToEnterRow = false
+                        Model.isItTimeToEnterColumn = false
+                        Model.isBoardFull = true
+                        invalidateTheView()
+                    }
+                    return
+                }
+                Model.isItTheComputersTurn = false
+                Model.isItTheUsersTurn = true
+                Model.isItTimeToEnterRow = true
+                Model.isItTimeToEnterColumn = false
                 invalidateTheView()
                 return
             }
-            Model.enterRow = false
-            Model.enterColumn = true
+            Model.isItTheComputersTurn = false
+            Model.isItTheUsersTurn = true
+            Model.isItTimeToEnterRow = false
+            Model.isItTimeToEnterColumn = true
             invalidateTheView()
-            return
+        }
+    }
+
+    private fun boardToString(): String {
+        var board = ""
+        for (row in model.gameBoard) {
+            for (column in row) {
+                board += "[${column.player}]"
+            }
+            board += "\n"
+        }
+        return board
+    }
+
+    private fun markCurrentPlayerMoveOnBoard(row: Int, column: Int) {
+        model.gameBoard[row][column] = model.player
+    }
+
+    private fun isUserCoordinateValid(row: Int, column: Int): Boolean {
+        return model.gameBoard[row][column] == Player.NA
+
+    }
+
+    private fun getOtherPlayer(player: Player): Player {
+        return if (player == Player.X) {
+            Player.O
+        } else {
+            Player.X
         }
     }
 
