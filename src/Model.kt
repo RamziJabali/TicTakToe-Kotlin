@@ -1,4 +1,6 @@
-open class Model() {
+import java.lang.Math.random
+
+class Model {
     companion object {
         const val WELCOME_TO_TICK = "Welcome to Tic Tac Toe\n"
         const val YOU_ARE_PLAYER = "You are player "
@@ -7,22 +9,64 @@ open class Model() {
         const val YOU_WIN = "YOU WIN: "
         const val PLAYER = "PLAYER "
         const val ITS_A_DRAW = "IT'S A DRAW"
-        const val BOARD_SIZE = 3
-        var didGameStart: Boolean = false
-        var isItTimeToEnterRow: Boolean = false
-        var isItTimeToEnterColumn: Boolean = false
-        var isBoardFull: Boolean = false
-        var isItTheComputersTurn: Boolean = false
-        var isItTheUsersTurn: Boolean = false
-        var didCurrentUserWin: Boolean = false
     }
 
-    var row: Int = -1
-    var column: Int = -1
-    var player: Player = Player.X
+    var userRowEntry: Int = -1
+    var userColumnEntry: Int = -1
+    var currentPlayer: Player = Player.X
+    var aiPlayerPick: Player = Player.NA
+    var humanPlayerPick: Player = Player.NA
     var gameBoard = arrayOf(
         arrayOf(Player.NA, Player.NA, Player.NA),
         arrayOf(Player.NA, Player.NA, Player.NA),
         arrayOf(Player.NA, Player.NA, Player.NA)
     )
+    var hasUserEnteredRow: Boolean = false
+    var hasUserEnteredColumn: Boolean = false
+
+    fun isAiTurn(): Boolean = currentPlayer == aiPlayerPick
+    fun isHumanTurn(): Boolean = currentPlayer == humanPlayerPick
+
+    fun isBoardFull(): Boolean {
+        for (row in gameBoard) {
+            for (column in row) {
+                if (column == Player.NA) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun boardToString(): String {
+        var board = ""
+        for (row in gameBoard) {
+            for (column in row) {
+                board += "[${column.display}]"
+            }
+            board += "\n"
+        }
+        return board
+    }
+
+    fun didPlayerWin(player: Player): Boolean {
+        return true
+    }
+
+    private fun doesUserWinHorizontallyAtRow(row: Int): Boolean {
+        return false
+    }
+
+    private fun doesUserWinVertically(): Boolean {
+        return false
+    }
+
+    private fun doesUserWinDiagonally(): Boolean {
+        return false
+    }
+
+    fun hasPlayerWon(currentPlayer: Player): Boolean {
+        return false
+    }
+
 }

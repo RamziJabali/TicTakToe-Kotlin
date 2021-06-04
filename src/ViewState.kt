@@ -1,7 +1,6 @@
-open class ViewState {
+class ViewState {
 
-   open var output: String = ""
-   open var displayOutput: Boolean = false
-   open var askForInput: Boolean = false
-
+   open var textToOutput: String = ""
+   open var isDisplayingOutput: Boolean = false
+   open var doesRequireUserInput: Boolean = false
 }

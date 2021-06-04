@@ -1,11 +1,15 @@
-open class View(var listener: ViewListener) {
+class View(
+    private val listener: ViewListener
+) {
 
-    open fun setNewViewState(newViewState: ViewState){
-        if(newViewState.displayOutput){
-            print(newViewState.output)
-        }
-        if(newViewState.askForInput){
-            listener.enteredInput(readLine())
+    fun setNewViewState(newViewState: ViewState) {
+        with(newViewState) {
+            if (isDisplayingOutput) {
+                print(textToOutput)
+            }
+            if (doesRequireUserInput) {
+                listener.onUserInput(readLine())
+            }
         }
     }
 }

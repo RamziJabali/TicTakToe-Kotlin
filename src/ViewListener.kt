@@ -1,3 +1,3 @@
 interface ViewListener {
-    fun enteredInput(input: String?)
+    fun onUserInput(input: String?)
 }
