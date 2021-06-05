@@ -2,10 +2,10 @@ import java.lang.Math.random
 
 class Model {
     companion object {
-        const val WELCOME_TO_TICK = "Welcome to Tic Tac Toe\n"
+        const val WELCOME_TO_TICK = "Welcome to Tic Tac Toe"
         const val YOU_ARE_PLAYER = "You are player "
-        const val ENTER_ROW = "Enter row number\n"
-        const val ENTER_COLUMN = "Enter column number\n"
+        const val ENTER_ROW = "Enter row number"
+        const val ENTER_COLUMN = "Enter column number"
         const val YOU_WIN = "YOU WIN: "
         const val PLAYER = "PLAYER "
         const val ITS_A_DRAW = "IT'S A DRAW"
