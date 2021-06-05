@@ -13,38 +13,38 @@ class ViewModel : ViewListener {
             if (isRowColumnWithinBoard(model.userRowEntry)) {
                 model.hasUserEnteredRow = true
                 model.hasUserEnteredColumn = false
-                viewState.doesRequireUserInput = true //todo: make this a function
-                viewState.isDisplayingOutput = true  //todo: make this a function
+                showRowOrColumn()
+                dontDisplayOutPutButAskForUserInput()
                 invalidateView()
                 return
             }
-            showRowAndColumn()
             model.hasUserEnteredRow = false
             model.hasUserEnteredColumn = true
-            viewState.doesRequireUserInput = true
-            viewState.isDisplayingOutput = true
+            showRowOrColumn()
+            dontDisplayOutPutButAskForUserInput()
             invalidateView()
             return
         }
 
         if (!model.hasUserEnteredColumn) {
-            showRowAndColumn()
             model.userColumnEntry = checkUserInput(input)
             if (isRowColumnWithinBoard(model.userColumnEntry)) {
                 if (isUserCoordinateValid(Pair(model.userRowEntry, model.userColumnEntry))) {
                     markCurrentPlayerMoveOnBoard(Pair(model.userRowEntry, model.userColumnEntry))
                     postTurnProcessing()
+                    return
                 }
                 model.hasUserEnteredRow = true
                 model.hasUserEnteredColumn = false
-                viewState.isDisplayingOutput = true
-                viewState.doesRequireUserInput = true
+                showRowOrColumn()
+                dontDisplayOutPutButAskForUserInput()
                 invalidateView()
+                return
             }
             model.hasUserEnteredRow = false
             model.hasUserEnteredColumn = true
-            viewState.isDisplayingOutput = true
-            viewState.doesRequireUserInput = true
+            showRowOrColumn()
+            dontDisplayOutPutButAskForUserInput()
             invalidateView()
         }
     }
@@ -56,7 +56,7 @@ class ViewModel : ViewListener {
         with(model) {
             aiPlayerPick = if ((0..1).random() == 0) X else O
             humanPlayerPick = getOtherPlayer(aiPlayerPick)
-            hasUserEnteredRow = aiPlayerPick != X
+            hasUserEnteredRow = aiPlayerPick == X
             showWelcomeMessage()
             showBoard()
             if (currentPlayer == aiPlayerPick) {
@@ -65,9 +65,8 @@ class ViewModel : ViewListener {
             } else {
                 hasUserEnteredRow = false
                 hasUserEnteredColumn = true
-                showRowAndColumn()
-                viewState.doesRequireUserInput = true
-                viewState.isDisplayingOutput = true
+                showRowOrColumn()
+                dontDisplayOutPutButAskForUserInput()
                 invalidateView()
             }
         }
@@ -94,25 +93,24 @@ class ViewModel : ViewListener {
             currentPlayer = getOtherPlayer(currentPlayer)
             hasUserEnteredRow = false
             hasUserEnteredColumn = true
-            showRowAndColumn()
-            viewState.isDisplayingOutput = true
-            viewState.doesRequireUserInput = true
+            showHumanTurnMessage()
+            showRowOrColumn()
+            dontDisplayOutPutButAskForUserInput()
             invalidateView()
         }
     }
 
     private fun showBoard() {
-        viewState.doesRequireUserInput = false
-        viewState.isDisplayingOutput = true
+        displayOutPutButDontAskForUserInput()
         viewState.textToOutput = model.boardToString()
         invalidateView()
     }
 
     private fun playComputerTurn() {
+        showAITurnMessage()
         var coordinateCandidate: Pair<Int, Int>
-        do {
-            coordinateCandidate = Pair((0..2).random(), (0..2).random())
-        } while (!isUserCoordinateValid(coordinateCandidate))
+        do coordinateCandidate = Pair((0..2).random(), (0..2).random())
+        while (!isUserCoordinateValid(coordinateCandidate))
         markCurrentPlayerMoveOnBoard(coordinateCandidate)
     }
 
@@ -122,6 +120,33 @@ class ViewModel : ViewListener {
 
     private fun isUserCoordinateValid(coordinate: Pair<Int, Int>): Boolean =
         model.gameBoard[coordinate.first][coordinate.second] == Player.NA
+
+    private fun displayOutPutAndAskForUserInput() {
+        viewState.doesRequireUserInput = true
+        viewState.isDisplayingOutput = true
+    }
+
+    private fun showAITurnMessage() {
+        viewState.textToOutput = Model.AI_TURN + "\n"
+        displayOutPutButDontAskForUserInput()
+        invalidateView()
+    }
+
+    private fun showHumanTurnMessage() {
+        viewState.textToOutput = Model.HUMAN_TURN + "\n"
+        displayOutPutButDontAskForUserInput()
+        invalidateView()
+    }
+
+    private fun displayOutPutButDontAskForUserInput() {
+        viewState.doesRequireUserInput = false
+        viewState.isDisplayingOutput = true
+    }
+
+    private fun dontDisplayOutPutButAskForUserInput() {
+        viewState.doesRequireUserInput = true
+        viewState.isDisplayingOutput = false
+    }
 
     private fun getOtherPlayer(player: Player): Player = if (player == X) O else X
 
@@ -136,36 +161,33 @@ class ViewModel : ViewListener {
         }
 
     private fun showDrawGame() {
-        viewState.doesRequireUserInput = false
-        viewState.isDisplayingOutput = true
         viewState.textToOutput = Model.ITS_A_DRAW
+        displayOutPutButDontAskForUserInput()
         invalidateView()
     }
 
     private fun showWelcomeMessage() {
         viewState.textToOutput =
             Model.WELCOME_TO_TICK + "\n" + Model.YOU_ARE_PLAYER + "${model.humanPlayerPick} \n"
-        viewState.isDisplayingOutput = true
-        viewState.doesRequireUserInput = false
+        displayOutPutButDontAskForUserInput()
         invalidateView()
     }
 
     private fun showGameOver() {
-        viewState.doesRequireUserInput = false
-        viewState.isDisplayingOutput = true
+        displayOutPutButDontAskForUserInput()
         viewState.textToOutput = "Player: ${model.currentPlayer} has won!"
         invalidateView()
     }
 
-    private fun showRowAndColumn() {
-        viewState.isDisplayingOutput = true
-        viewState.doesRequireUserInput = false
+    private fun showRowOrColumn() {
+        displayOutPutButDontAskForUserInput()
         if (!model.hasUserEnteredRow) {
             viewState.textToOutput = Model.ENTER_ROW + "\n"
             invalidateView()
             return
         }
         viewState.textToOutput = Model.ENTER_COLUMN + "\n"
+        invalidateView()
     }
 
     private fun invalidateView() {

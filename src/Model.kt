@@ -4,6 +4,8 @@ class Model {
     companion object {
         const val WELCOME_TO_TICK = "Welcome to Tic Tac Toe"
         const val YOU_ARE_PLAYER = "You are player "
+        const val AI_TURN = "AI turn: "
+        const val HUMAN_TURN = "Human turn: "
         const val ENTER_ROW = "Enter row number"
         const val ENTER_COLUMN = "Enter column number"
         const val YOU_WIN = "YOU WIN: "
