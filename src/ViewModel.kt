@@ -121,10 +121,6 @@ class ViewModel : ViewListener {
     private fun isUserCoordinateValid(coordinate: Pair<Int, Int>): Boolean =
         model.gameBoard[coordinate.first][coordinate.second] == Player.NA
 
-    private fun displayOutPutAndAskForUserInput() {
-        viewState.doesRequireUserInput = true
-        viewState.isDisplayingOutput = true
-    }
 
     private fun showAITurnMessage() {
         viewState.textToOutput = Model.AI_TURN + "\n"

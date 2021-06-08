@@ -11,6 +11,7 @@ class Model {
         const val YOU_WIN = "YOU WIN: "
         const val PLAYER = "PLAYER "
         const val ITS_A_DRAW = "IT'S A DRAW"
+        const val BOARD_SIZE = 3
     }
 
     var userRowEntry: Int = -1
@@ -51,23 +52,38 @@ class Model {
         return board
     }
 
-    fun didPlayerWin(player: Player): Boolean {
-        return true
-    }
+    fun hasPlayerWon(currentPlayer: Player): Boolean =
+        doesUserWinDiagonally() || doesUserWinHorizontally() || doesUserWinVertically()
 
-    private fun doesUserWinHorizontallyAtRow(row: Int): Boolean {
+    fun doesUserWinHorizontally(): Boolean {
+        var numberOfContiguousMarks = 0
+        for (row in gameBoard) {
+            for (column in row) {
+                if (column == currentPlayer) numberOfContiguousMarks++ else numberOfContiguousMarks = 0
+            }
+            if (numberOfContiguousMarks == BOARD_SIZE) return true
+        }
         return false
     }
 
-    private fun doesUserWinVertically(): Boolean {
+    fun doesUserWinVertically(): Boolean {
+        var numberOfContiguousMarks = 0
+        var row: Int
+        var column = 0
+        while (column in 0..(BOARD_SIZE - 1)) {
+            row = 0
+            while (row in 0..(BOARD_SIZE - 1)) {
+                if (gameBoard[row][column] == currentPlayer) numberOfContiguousMarks++ else numberOfContiguousMarks =
+                    0
+                row++
+            }
+            if (numberOfContiguousMarks >= BOARD_SIZE) return true
+            column++
+        }
         return false
     }
 
     private fun doesUserWinDiagonally(): Boolean {
-        return false
-    }
-
-    fun hasPlayerWon(currentPlayer: Player): Boolean {
         return false
     }
 
