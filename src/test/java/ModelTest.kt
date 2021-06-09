@@ -46,5 +46,14 @@ class ModelTest {
         }
         assertEquals(true, model.hasPlayerWon())
     }
+    @Test
+    fun testHasPlayerWonDiagonally2() {
+        val model = Model().apply {
+            gameBoard[0][2] = X
+            gameBoard[1][1] = X
+            gameBoard[2][0] = O
+        }
+        assertEquals(true, model.hasPlayerWon())
+    }
 
 }
