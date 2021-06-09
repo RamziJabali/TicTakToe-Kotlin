@@ -51,7 +51,7 @@ class ModelTest {
         val model = Model().apply {
             gameBoard[0][2] = X
             gameBoard[1][1] = X
-            gameBoard[2][0] = O
+            gameBoard[2][0] = X
         }
         assertEquals(true, model.hasPlayerWon())
     }
