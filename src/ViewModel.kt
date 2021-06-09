@@ -144,6 +144,11 @@ class ViewModel : ViewListener {
         viewState.isDisplayingOutput = false
     }
 
+    private fun dontDisplayAndDontAskForUserInput() {
+        viewState.doesRequireUserInput = false
+        viewState.isDisplayingOutput = false
+    }
+
     private fun getOtherPlayer(player: Player): Player = if (player == X) O else X
 
     private fun isRowColumnWithinBoard(input: Int) = input > -1 && input < 3
@@ -173,6 +178,7 @@ class ViewModel : ViewListener {
         displayOutPutButDontAskForUserInput()
         viewState.textToOutput = "Player: ${model.currentPlayer} has won!"
         invalidateView()
+        dontDisplayAndDontAskForUserInput()
     }
 
     private fun showRowOrColumn() {
