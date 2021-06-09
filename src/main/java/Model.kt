@@ -51,7 +51,7 @@ class Model {
         return board
     }
 
-    fun hasPlayerWon(currentPlayer: Player): Boolean =
+    fun hasPlayerWon(): Boolean =
         doesUserWinDiagonally() || doesUserWinHorizontally() || doesUserWinVertically()
 
     private fun doesUserWinHorizontally(): Boolean {

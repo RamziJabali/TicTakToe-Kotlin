@@ -76,7 +76,7 @@ class ViewModel : ViewListener {
         viewState.textToOutput = ""
         with(model) {
             showBoard()
-            if (hasPlayerWon(currentPlayer)) {
+            if (hasPlayerWon()) {
                 showGameOver()
                 return
             }

@@ -1,6 +1,7 @@
 import Player.*
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class ModelTest {
 
@@ -12,32 +13,38 @@ class ModelTest {
                 model.gameBoard[row][column] = X
             }
         }
-        Assert.assertEquals(true, model.isBoardFull())
+        assertTrue(model.isBoardFull())
+        assertTrue(model.isBoardFull())
     }
 
+    @Test
     fun testHasPlayerWonVertically() {
         val model = Model().apply {
             gameBoard[0][0] = X
             gameBoard[1][0] = X
             gameBoard[2][0] = X
         }
-        Assert.assertEquals(true, model.hasPlayerWon(X))
+        assertEquals(true, model.hasPlayerWon())
     }
+
+    @Test
     fun testHasPlayerWonHorizontally() {
         val model = Model().apply {
             gameBoard[0][0] = X
             gameBoard[0][1] = X
             gameBoard[0][2] = X
         }
-        Assert.assertEquals(true, model.isBoardFull())
+        assertEquals(true, model.hasPlayerWon())
     }
+
+    @Test
     fun testHasPlayerWonDiagonally() {
         val model = Model().apply {
             gameBoard[0][0] = X
             gameBoard[1][1] = X
             gameBoard[2][2] = X
         }
-        Assert.assertEquals(true, model.isBoardFull())
+        assertEquals(true, model.hasPlayerWon())
     }
 
 }
