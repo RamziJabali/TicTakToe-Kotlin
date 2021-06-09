@@ -9,7 +9,7 @@ class ViewModel : ViewListener {
 
     override fun onUserInput(input: String?) {
         if (!model.hasUserEnteredRow) {
-            model.userRowEntry = checkUserInput(input)
+             model.userRowEntry = checkUserInput(input)
             if (isRowColumnWithinBoard(model.userRowEntry)) {
                 model.hasUserEnteredRow = true
                 model.hasUserEnteredColumn = false
@@ -76,7 +76,7 @@ class ViewModel : ViewListener {
         viewState.textToOutput = ""
         with(model) {
             showBoard()
-            if (hasPlayerWon(currentPlayer)) {
+            if (hasPlayerWon()) {
                 showGameOver()
                 return
             }
@@ -176,7 +176,7 @@ class ViewModel : ViewListener {
 
     private fun showGameOver() {
         displayOutPutButDontAskForUserInput()
-        viewState.textToOutput = "Player: ${model.currentPlayer} has won!"
+        viewState.textToOutput = "${Model.YOU_WIN} ${Model.PLAYER} ${model.currentPlayer} "
         invalidateView()
         dontDisplayAndDontAskForUserInput()
     }

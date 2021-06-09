@@ -27,7 +27,6 @@ class Model {
     var hasUserEnteredRow: Boolean = false
     var hasUserEnteredColumn: Boolean = false
 
-    fun isAiTurn(): Boolean = currentPlayer == aiPlayerPick
     fun isHumanTurn(): Boolean = currentPlayer == humanPlayerPick
 
     fun isBoardFull(): Boolean {
@@ -52,7 +51,7 @@ class Model {
         return board
     }
 
-    fun hasPlayerWon(currentPlayer: Player): Boolean =
+    fun hasPlayerWon(): Boolean =
         doesUserWinDiagonally() || doesUserWinHorizontally() || doesUserWinVertically()
 
     private fun doesUserWinHorizontally(): Boolean {
