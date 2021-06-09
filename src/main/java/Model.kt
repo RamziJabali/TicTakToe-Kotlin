@@ -27,7 +27,6 @@ class Model {
     var hasUserEnteredRow: Boolean = false
     var hasUserEnteredColumn: Boolean = false
 
-    fun isAiTurn(): Boolean = currentPlayer == aiPlayerPick
     fun isHumanTurn(): Boolean = currentPlayer == humanPlayerPick
 
     fun isBoardFull(): Boolean {
