@@ -1,2 +1,7 @@
-# TicTakToe-Kotlin
-Doing a simple Tic Tak Toe Game in Kotlin 
+<h1 align="center">Tic Tac Toe Kotlin</h1>
+
+## Architecture
+- MVVM
+
+## Libraries
+- [JUnit](https://junit.org/junit5/)
